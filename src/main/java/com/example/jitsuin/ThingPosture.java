@@ -28,14 +28,11 @@ public class ThingPosture {
         log(" constructor: generating token ");
     }
 
-    public String generateToken(String token_url, String client_id, String client_secret, String client_resource) { //
+    public void generateToken(String token_url, String tenant, String client_id, String client_secret, String client_resource) { //
         HttpPost http_post = null;
-        String cook = "";
         try {
             HttpClient httpclient = HttpClients.createDefault();
-            http_post = new HttpPost(token_url);
-
-            //http_post.setHeader("Host", token_url);
+            http_post = new HttpPost(token_url + tenant + "/oauth2/v2.0/token");
 
             http_post.setHeader("Accept", "application/json");
             http_post.setHeader("Accept", "*/*");
@@ -46,11 +43,10 @@ public class ThingPosture {
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("client_id", client_id));
             params.add(new BasicNameValuePair("client_secret", client_secret));
-            params.add(new BasicNameValuePair("resource", client_resource));
+            params.add(new BasicNameValuePair("scope", client_resource));
 
             params.add(new BasicNameValuePair("grant_type", "client_credentials"));
             //params.add(new BasicNameValuePair("Content-Type", "application/x-www-form-urlencoded"));
-
             http_post.setEntity(new UrlEncodedFormEntity(params));
             HttpResponse response = httpclient.execute(http_post);
             HttpEntity responseEntity = response.getEntity();
@@ -58,11 +54,8 @@ public class ThingPosture {
             if (responseEntity != null) {
                 this.bearer_token = getBearer(EntityUtils.toString(responseEntity), "access_token");
             }
-
         } catch (Exception e) {
             log(" getToken.error: " + e.toString());
-        } finally {
-            return cook;
         }
     }
 
@@ -99,7 +92,7 @@ public class ThingPosture {
             HttpEntity responseEntity = response.getEntity();
             if (responseEntity != null) {
                 String entity_str = EntityUtils.toString(responseEntity);
-                log("  getStatus: " + entity_str);
+                log("  get status: " + entity_str);
 
                 if (entity_str.toLowerCase().contains(compliance_string)) { //graph api returns complianceState: compliant
                     compliance_status = "noncompliant";
