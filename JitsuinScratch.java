@@ -11,7 +11,7 @@ class JitsuinScratch {
         String CLIENT_SECRET = "pjxHB~g_r12n6.m8RqKWPUUbR_r6Tr_o0V";
         String CLIENT_RESOURCE = "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io/.default";
 
-        String DEVICE_ID = "f970e497-0574-491d-9549-67b15ec6b171";
+        String DEVICE_ID = "cadb317a-0cee-4670-8e25-867aeaead3bc";
         String COMPLIANCE_NAME = "compliance";
 
         ThingPosture thingInfo = new ThingPosture();
