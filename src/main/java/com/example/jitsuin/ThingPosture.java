@@ -94,8 +94,10 @@ public class ThingPosture {
                 String entity_str = EntityUtils.toString(responseEntity);
                 log("  get status: " + entity_str);
 
-                if (entity_str.toLowerCase().contains(compliance_string)) { //graph api returns complianceState: compliant
+                if (!entity_str.toLowerCase().contains(compliance_string)) { //graph api returns complianceState: compliant
                     compliance_status = "noncompliant";
+                } else {
+                    compliance_status = "compliant";
                 }
             } else {
                 compliance_status = "connection error";
