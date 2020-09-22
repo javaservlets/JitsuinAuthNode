@@ -12,7 +12,7 @@ class JitsuinScratch {
         String CLIENT_RESOURCE = "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io/.default";
 
         String DEVICE_ID = "cadb317a-0cee-4670-8e25-867aeaead3bc";
-        String COMPLIANCE_NAME = "compliance";
+        String COMPLIANCE_NAME = "\"compliant\":true";
 
         ThingPosture thingInfo = new ThingPosture();
         thingInfo.generateToken(TOKEN_URL, TENANT, CLIENT_ID, CLIENT_SECRET, CLIENT_RESOURCE);
