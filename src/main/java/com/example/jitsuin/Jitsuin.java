@@ -3,7 +3,7 @@ package com.example.jitsuin;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.sun.identity.shared.debug.Debug;
+
 import org.forgerock.json.JsonValue;
 import org.forgerock.openam.annotations.sm.Attribute;
 import org.forgerock.openam.auth.node.api.Action;
@@ -12,16 +12,23 @@ import org.forgerock.openam.auth.node.api.NodeProcessException;
 import org.forgerock.openam.auth.node.api.TreeContext;
 import org.forgerock.openam.core.CoreWrapper;
 import org.forgerock.util.i18n.PreferredLocales;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Node.Metadata(outcomeProvider = Jitsuin.MyOutcomeProvider.class, configClass = Jitsuin.Config.class)
+@Node.Metadata(outcomeProvider =
+        Jitsuin.MyOutcomeProvider.class,
+        configClass = Jitsuin.Config.class,
+        tags = {"iot"}
+        )
 
 public class Jitsuin implements Node {
     private final Config config;
     private final CoreWrapper coreWrapper;
     private final static String DEBUG_FILE = "Jitsuin";
-    protected Debug debug = Debug.getInstance(DEBUG_FILE);
+    private final Logger debug = LoggerFactory.getLogger(Jitsuin.class);
+    //protected Debug debug = Debug.getInstance(DEBUG_FILE);
     JsonValue context_json;
 
     @Override
@@ -29,10 +36,11 @@ public class Jitsuin implements Node {
         debug.error("+++     starting Jitsuin");
 
         context_json = context.sharedState.copy();
-        String device_id = context_json.get("device_id").asString();
+        String device_id = context_json.get("username").asString();
 
-        ThingPosture thing_posture = new ThingPosture();
-        String status = thing_posture.getStatus(config.Jitsuin_URL(), device_id, config.Compliance_String());
+        ThingPosture thingInfo = new ThingPosture();
+        thingInfo.generateToken(config.Jitsuin_Token_URL(), config.Tenant(), config.Client_ID(), config.Client_Secret(), config.Client_Resource());
+        String status = thingInfo.getStatus(config.Jitsuin_URL(), device_id, config.Compliance_String());
         Action action = null ;
 
         debug.error("+++   action.process  " + status.toString());
@@ -88,27 +96,37 @@ public class Jitsuin implements Node {
 
         @Attribute(order = 100)
         default String Jitsuin_URL() {
-            return "";
+            return "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io/archivist/v1/compliance";
+        }
+
+        @Attribute(order = 101)
+        default String Jitsuin_Token_URL() {
+            return "https://login.microsoftonline.com";
         }
 
         @Attribute(order = 200)
         default String Client_Secret() {
-            return "";
+            return "pjxHB~g_r12n6.m8RqKWPUUbR_r6Tr_o0V";
         }
 
         @Attribute(order = 300)
         default String Client_ID() {
-            return "";
+            return "d45d550a-d5b4-421b-8ece-f47ab44abaec";
         }
 
         @Attribute(order = 400)
-        default String Tenant() {
-            return "";
+        default String Client_Resource() {
+            return "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io";
         }
 
         @Attribute(order = 500)
+        default String Tenant() {
+            return "f1f1a9e6-87a4-4276-afda-84836215a5f2";
+        }
+
+        @Attribute(order = 600)
         default String Compliance_String() {
-            return "";
+            return "compliant";
         }
 
     }
