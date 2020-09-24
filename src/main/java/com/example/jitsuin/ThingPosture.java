@@ -1,6 +1,5 @@
 package com.example.jitsuin;
 
-import com.sun.identity.shared.debug.Debug;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,9 +18,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ThingPosture {
     private final static String DEBUG_FILE = "Jitsuin";
-    protected Debug debug = Debug.getInstance(DEBUG_FILE);
+    private final Logger debug = LoggerFactory.getLogger(Jitsuin.class); //rj? this class or Jitsuin class?
     public String bearer_token;
 
     public ThingPosture() { // only setting vals n via the constructor to make scratch testing as 'real' as possible
@@ -32,7 +34,7 @@ public class ThingPosture {
         HttpPost http_post = null;
         try {
             HttpClient httpclient = HttpClients.createDefault();
-            http_post = new HttpPost(token_url + tenant + "/oauth2/v2.0/token");
+            http_post = new HttpPost(token_url + tenant + "/oauth2/token");
 
             http_post.setHeader("Accept", "application/json");
             http_post.setHeader("Accept", "*/*");
@@ -43,10 +45,11 @@ public class ThingPosture {
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("client_id", client_id));
             params.add(new BasicNameValuePair("client_secret", client_secret));
-            params.add(new BasicNameValuePair("scope", client_resource));
+            params.add(new BasicNameValuePair("resource", client_resource));
 
             params.add(new BasicNameValuePair("grant_type", "client_credentials"));
             //params.add(new BasicNameValuePair("Content-Type", "application/x-www-form-urlencoded"));
+
             http_post.setEntity(new UrlEncodedFormEntity(params));
             HttpResponse response = httpclient.execute(http_post);
             HttpEntity responseEntity = response.getEntity();
@@ -54,8 +57,10 @@ public class ThingPosture {
             if (responseEntity != null) {
                 this.bearer_token = getBearer(EntityUtils.toString(responseEntity), "access_token");
             }
+
         } catch (Exception e) {
             log(" getToken.error: " + e.toString());
+
         }
     }
 
@@ -84,7 +89,7 @@ public class ThingPosture {
 
         try {
             HttpClient httpclient = HttpClients.createDefault();
-            http_get = new HttpGet(query_url + device_id);
+            http_get = new HttpGet(query_url + "assets/" + device_id);
             http_get.setHeader("Authorization", "Bearer " + this.bearer_token); // latter was retrieved on class instantiation
             http_get.setHeader("Content-Type", "application/json");
 
@@ -94,10 +99,8 @@ public class ThingPosture {
                 String entity_str = EntityUtils.toString(responseEntity);
                 log("  get status: " + entity_str);
 
-                if (!entity_str.toLowerCase().contains(compliance_string)) { //graph api returns complianceState: compliant
+                if (entity_str.toLowerCase().contains(compliance_string)) { //graph api returns complianceState: compliant
                     compliance_status = "noncompliant";
-                } else {
-                    compliance_status = "compliant";
                 }
             } else {
                 compliance_status = "connection error";
