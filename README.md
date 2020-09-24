@@ -22,7 +22,7 @@ The details for configuring Jitsuin are [here](https://jitsuin-archivist.readthe
 
 ### Configuration: Mutual TLS
 
-The details for configuring Jitsuin are [here](./config/mtls.md).
+The details for configuring mTLS are [here](./config/mtls.md).
 
 ### Configuration: ForgeRock Authentication Node
 
@@ -32,8 +32,7 @@ Once the above has been done and verified, configure an Authentication Tree as f
 1. Download the Auth Node the Jitsuin*.jar from the below ../target directory into the ../web-container/webapps/openam/WEB-INF/lib directory where AM is deployed.
 2. Restart the web container to pick up the new nodes.  The new node will then appear in the authentication trees components palette.
 3. Create a new Authentication Tree ![ScreenShot](./config/1.png)
-4. If you are running Access Manager 7 or later drop in the Certificate Collector Node and configure it (if you are running AM 6.x, use the Certificate Reader from ![github](https://github.com/javaservlets/CertificateReader) 
-5.  ![ScreenShot](./config/2.png)  (https://github.com/javaservlets/CertificateReader) 
+4. Drop in the Certificate Collector and Certificate User Extractor nodes and wire them as shown here ![ScreenShot](./config/2.png)  (https://github.com/javaservlets/CertificateReader) 
 5. From the components pallete select the Jitsuin node and configure it this manner: ![ScreenShot](./config/3.png)
 6. From the components pallete select the Success node and configure it this manner: ![ScreenShot](./config/4.png)
 7. For the case where Jitsuin returns a 'non-compliant' status, it is up to you to decide if you want to perform an additional step-up challenge, display a message, redirect, account lockout, etc.
