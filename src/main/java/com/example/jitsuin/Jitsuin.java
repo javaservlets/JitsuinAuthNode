@@ -3,7 +3,6 @@ package com.example.jitsuin;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-
 import org.forgerock.json.JsonValue;
 import org.forgerock.openam.annotations.sm.Attribute;
 import org.forgerock.openam.auth.node.api.Action;
@@ -21,7 +20,7 @@ import java.util.List;
         Jitsuin.MyOutcomeProvider.class,
         configClass = Jitsuin.Config.class,
         tags = {"iot"}
-        )
+)
 
 public class Jitsuin implements Node {
     private final Config config;
@@ -41,7 +40,7 @@ public class Jitsuin implements Node {
         ThingPosture thingInfo = new ThingPosture();
         thingInfo.generateToken(config.Jitsuin_Token_URL(), config.Tenant(), config.Client_ID(), config.Client_Secret(), config.Client_Resource());
         String status = thingInfo.getStatus(config.Jitsuin_URL(), device_id, config.Compliance_String());
-        Action action = null ;
+        Action action = null;
 
         debug.error("+++   action.process  " + status.toString());
 
@@ -96,7 +95,7 @@ public class Jitsuin implements Node {
 
         @Attribute(order = 100)
         default String Jitsuin_URL() {
-            return "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io/archivist/v1/compliance";
+            return "https://playground-avid.engineering-k8s-poc-1.dev.poc.jitsuin.io/archivist/v1/compliance/assets/";
         }
 
         @Attribute(order = 101)
@@ -106,27 +105,27 @@ public class Jitsuin implements Node {
 
         @Attribute(order = 200)
         default String Client_Secret() {
-            return "pjxHB~g_r12n6.m8RqKWPUUbR_r6Tr_o0V";
+            return ".uQ9wBT.ftn3X~qRR-Hr7eFic2OMfo2JX3";
         }
 
         @Attribute(order = 300)
         default String Client_ID() {
-            return "d45d550a-d5b4-421b-8ece-f47ab44abaec";
+            return "54c65c80-2734-47d7-919e-3d679b6a4905";
         }
 
         @Attribute(order = 400)
         default String Client_Resource() {
-            return "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io";
+            return "https://playground-avid.engineering-k8s-poc-1.dev.poc.jitsuin.io/.default";
         }
 
         @Attribute(order = 500)
         default String Tenant() {
-            return "f1f1a9e6-87a4-4276-afda-84836215a5f2";
+            return "e6cd7cbd-4331-4942-b28d-a327d99a088a";
         }
 
         @Attribute(order = 600)
         default String Compliance_String() {
-            return "compliant";
+            return "\\\"compliant\\\":true";
         }
 
     }

@@ -25,7 +25,7 @@ public class ThingPosture {
     public String bearer_token;
 
     public ThingPosture() { // only setting vals n via the constructor to make scratch testing as 'real' as possible
-        log(" constructor: generating token ");
+        //log(" constructor: generating token ");
     }
 
     public void generateToken(String token_url, String tenant, String client_id, String client_secret, String client_resource) { //
@@ -41,23 +41,23 @@ public class ThingPosture {
             http_post.setHeader("Connection", "keep-alive");
 
             List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("grant_type", "client_credentials"));
             params.add(new BasicNameValuePair("client_id", client_id));
             params.add(new BasicNameValuePair("client_secret", client_secret));
-            params.add(new BasicNameValuePair("resource", client_resource));
-            params.add(new BasicNameValuePair("grant_type", "client_credentials"));
+            params.add(new BasicNameValuePair("scope", client_resource)); // this field name had previously been 'resource'
 
             http_post.setEntity(new UrlEncodedFormEntity(params));
             HttpResponse response = httpclient.execute(http_post);
             HttpEntity responseEntity = response.getEntity();
-
-            if (EntityUtils.toString(responseEntity).contains("access_token")) {
-                this.bearer_token = getBearer(EntityUtils.toString(responseEntity), "access_token");
+            String resp = EntityUtils.toString(responseEntity);
+            if (resp.contains("access_token")) {
+                this.bearer_token = getBearer(resp, "access_token");
             } else {
-                log("error in getting jitsuin acccess token");
+                log("error: bearer doesn't have jitsuin acccess token");
             }
 
         } catch (Exception e) {
-            log(" getToken.error: " + e.toString());
+            log(" getToken.exception: " + e.toString());
             return;
         }
     }
@@ -84,15 +84,10 @@ public class ThingPosture {
 
     public String getStatus(String query_url, String device_id, String compliance_string) { //
         String compliance_status = "";
-
-        if (this.bearer_token == null) { //something is amiss so exit
-            return "connection error" ;
-        }
-
-        HttpGet http_get = null;
+        HttpGet http_get;
         try {
             HttpClient httpclient = HttpClients.createDefault();
-            http_get = new HttpGet(query_url + "assets/" + device_id);
+            http_get = new HttpGet(query_url + device_id);
             http_get.setHeader("Authorization", "Bearer " + this.bearer_token); // latter was retrieved on class instantiation
             http_get.setHeader("Content-Type", "application/json");
 
