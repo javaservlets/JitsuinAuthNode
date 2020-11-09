@@ -12,14 +12,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThingPosture {
     private final static String DEBUG_FILE = "Jitsuin";
@@ -46,25 +44,26 @@ public class ThingPosture {
             params.add(new BasicNameValuePair("client_id", client_id));
             params.add(new BasicNameValuePair("client_secret", client_secret));
             params.add(new BasicNameValuePair("resource", client_resource));
-
             params.add(new BasicNameValuePair("grant_type", "client_credentials"));
-            //params.add(new BasicNameValuePair("Content-Type", "application/x-www-form-urlencoded"));
 
             http_post.setEntity(new UrlEncodedFormEntity(params));
             HttpResponse response = httpclient.execute(http_post);
             HttpEntity responseEntity = response.getEntity();
 
-            if (responseEntity != null) {
+            if (EntityUtils.toString(responseEntity).contains("access_token")) {
                 this.bearer_token = getBearer(EntityUtils.toString(responseEntity), "access_token");
+            } else {
+                log("error in getting jitsuin acccess token");
             }
 
         } catch (Exception e) {
             log(" getToken.error: " + e.toString());
-
+            return;
         }
     }
 
     private static String getBearer(String parent, String child) {
+        System.out.println("getting bearer...");
         String noise = "";
         try {
             JSONObject jobj = new JSONObject(parent);
@@ -85,8 +84,12 @@ public class ThingPosture {
 
     public String getStatus(String query_url, String device_id, String compliance_string) { //
         String compliance_status = "";
-        HttpGet http_get = null;
 
+        if (this.bearer_token == null) { //something is amiss so exit
+            return "connection error" ;
+        }
+
+        HttpGet http_get = null;
         try {
             HttpClient httpclient = HttpClients.createDefault();
             http_get = new HttpGet(query_url + "assets/" + device_id);
@@ -114,6 +117,7 @@ public class ThingPosture {
 
 
     public void log(String str) {
+        System.out.println("+++  thingPosture: " + str);
         debug.error("+++  thingPosture:    " + str);
     }
 }
