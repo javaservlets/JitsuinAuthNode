@@ -49,9 +49,9 @@ public class ThingPosture {
             http_post.setEntity(new UrlEncodedFormEntity(params));
             HttpResponse response = httpclient.execute(http_post);
             HttpEntity responseEntity = response.getEntity();
-            String resp = EntityUtils.toString(responseEntity);
-            if (resp.contains("access_token")) {
-                this.bearer_token = getBearer(resp, "access_token");
+            String token = EntityUtils.toString(responseEntity);
+            if (token.contains("access_token")) {
+                this.bearer_token = getBearer(token, "access_token");
             } else {
                 log("error: bearer doesn't have jitsuin acccess token");
             }
