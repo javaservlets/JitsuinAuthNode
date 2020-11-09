@@ -1,18 +1,16 @@
 import com.example.jitsuin.ThingPosture;
 
-// to run as a scratch file in IntelliJ
 class JitsuinScratch {
     public static void main(String[] args) {
-        String JITSUIN_URL = "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io/archivist/v1/compliance/assets/";
+        String JITSUIN_URL = "https://playground-avid.engineering-k8s-poc-1.dev.poc.jitsuin.io/archivist/v1/compliance/assets/";
         String TOKEN_URL="https://login.microsoftonline.com/";
-        String TENANT="f1f1a9e6-87a4-4276-afda-84836215a5f2";
+        String CLIENT_SECRET = ".uQ9wBT.ftn3X~qRR-Hr7eFic2OMfo2JX3";
+        String CLIENT_ID = "54c65c80-2734-47d7-919e-3d679b6a4905";
+        String CLIENT_RESOURCE = "https://playground-avid.engineering-k8s-poc-1.dev.poc.jitsuin.io/.default";
+        String TENANT="e6cd7cbd-4331-4942-b28d-a327d99a088a";
+        String COMPLIANCE_NAME = "\\\"compliant\\\":true";
 
-        String CLIENT_ID = "d45d550a-d5b4-421b-8ece-f47ab44abaec";
-        String CLIENT_SECRET = "pjxHB~g_r12n6.m8RqKWPUUbR_r6Tr_o0V";
-        String CLIENT_RESOURCE = "https://demo-oper-avid.engineering-k8s-prod-2.dev.prod.jitsuin.io/.default";
-
-        String DEVICE_ID = "cadb317a-0cee-4670-8e25-867aeaead3bc";
-        String COMPLIANCE_NAME = "\"compliant\":true";
+        String DEVICE_ID = "0e589f7c-c480-4302-925a-9b243a553ade";
 
         ThingPosture thingInfo = new ThingPosture();
         thingInfo.generateToken(TOKEN_URL, TENANT, CLIENT_ID, CLIENT_SECRET, CLIENT_RESOURCE);
