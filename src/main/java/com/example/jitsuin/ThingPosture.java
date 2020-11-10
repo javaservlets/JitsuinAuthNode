@@ -32,7 +32,7 @@ public class ThingPosture {
         HttpPost http_post = null;
         try {
             HttpClient httpclient = HttpClients.createDefault();
-            http_post = new HttpPost(token_url + tenant + "/oauth2/v2.0/token");
+            http_post = new HttpPost(token_url + "/" + tenant + "/oauth2/v2.0/token");
 
             http_post.setHeader("Accept", "application/json");
             http_post.setHeader("Accept", "*/*");
