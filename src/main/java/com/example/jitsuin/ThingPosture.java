@@ -83,7 +83,7 @@ public class ThingPosture {
     }
 
     public String getStatus(String query_url, String device_id, String compliance_string) { //
-        String compliance_status = "";
+        String compliance_status = "noncompliant";
         HttpGet http_get;
         try {
             HttpClient httpclient = HttpClients.createDefault();
@@ -96,9 +96,10 @@ public class ThingPosture {
             if (responseEntity != null) {
                 String entity_str = EntityUtils.toString(responseEntity);
                 log("  get status: " + entity_str);
-
-                if (entity_str.toLowerCase().contains(compliance_string)) { //graph api returns complianceState: compliant
-                    compliance_status = "noncompliant";
+                if (entity_str.contains(compliance_string)) { //graph api returns complianceState: compliant
+                    compliance_status = "compliant";
+                } else if (entity_str.contains("error")) { // device is unknown
+                    compliance_status = "unknown";
                 }
             } else {
                 compliance_status = "connection error";
